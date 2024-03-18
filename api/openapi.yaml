@@ -1,0 +1,1776 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: contact@crowdsec.net
+  description: CrowdSec local API
+  title: Swagger CrowdSec
+  version: 1.0.0
+  x-api-status-urls: false
+externalDocs:
+  description: Find out more about CrowdSec
+  url: https://github.com/crowdsecurity/crowdsec
+servers:
+- url: https://127.0.0.1/v1
+- url: http://127.0.0.1/v1
+tags:
+- description: "Operations about watchers : cscli & crowdsec"
+  name: watchers
+- description: "Operations about decisions : bans, captcha, rate-limit etc."
+  name: bouncers
+paths:
+  /decisions/stream:
+    get:
+      deprecated: false
+      description: Returns a list of new/expired decisions. Intended for bouncers
+        that need to "stream" decisions
+      operationId: Bouncers_getDecisionsStream
+      parameters:
+      - description: "If true, means that the bouncers is starting and a full list\
+          \ must be provided"
+        explode: true
+        in: query
+        name: startup
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: Comma separated scopes of decisions to fetch
+        explode: true
+        in: query
+        name: scopes
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Comma separated name of origins. If provided, then only the\
+          \ decisions originating from provided origins would be returned."
+        explode: true
+        in: query
+        name: origins
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Comma separated words. If provided, only the decisions created\
+          \ by scenarios containing any of the provided word would be returned."
+        explode: true
+        in: query
+        name: scenarios_containing
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Comma separated words. If provided, only the decisions created\
+          \ by scenarios, not containing any of the provided word would be returned."
+        explode: true
+        in: query
+        name: scenarios_not_containing
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecisionsStreamResponse'
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      security:
+      - APIKeyAuthorizer: []
+      summary: getDecisionsStream
+      tags:
+      - bouncers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--decisions-stream
+      x-accepts: application/json
+    head:
+      deprecated: false
+      description: Returns a list of new/expired decisions. Intended for bouncers
+        that need to "stream" decisions
+      operationId: Bouncers_getDecisionsStream
+      parameters:
+      - description: "If true, means that the bouncer is starting and a full list\
+          \ must be provided"
+        explode: true
+        in: query
+        name: startup
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: 400 response
+      security:
+      - APIKeyAuthorizer: []
+      summary: GetDecisionsStream
+      tags:
+      - bouncers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-head--decisions-stream
+      x-accepts: application/json
+  /decisions:
+    delete:
+      deprecated: false
+      description: Delete decisions(s) for given filters (only from cscli)
+      operationId: Watchers_removeDecisions
+      parameters:
+      - description: scope to which the decision applies (ie. IP/Range/Username/Session/...)
+        explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: the value to match for in the specified scope
+        explode: true
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: type of decision
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: IP to search for (shorthand for scope=ip&value=)
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: range to search for (shorthand for scope=range&value=)
+        explode: true
+        in: query
+        name: range
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: scenario to search
+        explode: true
+        in: query
+        name: scenario
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteDecisionResponse'
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: deleteDecisions
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--decisions
+      x-accepts: application/json
+    get:
+      deprecated: false
+      description: Returns information about existing decisions
+      operationId: Bouncers_getInformation
+      parameters:
+      - description: scope to which the decision applies (ie. IP/Range/Username/Session/...)
+        explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: the value to match for in the specified scope
+        explode: true
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: type of decision
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: IP to search for (shorthand for scope=ip&value=)
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: range to search for (shorthand for scope=range&value=)
+        explode: true
+        in: query
+        name: range
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "indicate if you're looking for a decision that contains the\
+          \ value, or that is contained within the value"
+        explode: true
+        in: query
+        name: contains
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: "Comma separated name of origins. If provided, then only the\
+          \ decisions originating from provided origins would be returned."
+        explode: true
+        in: query
+        name: origins
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Comma separated words. If provided, only the decisions created\
+          \ by scenarios containing any of the provided word would be returned."
+        explode: true
+        in: query
+        name: scenarios_containing
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "Comma separated words. If provided, only the decisions created\
+          \ by scenarios, not containing any of the provided word would be returned."
+        explode: true
+        in: query
+        name: scenarios_not_containing
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDecisionsResponse'
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      summary: getDecisions
+      tags:
+      - bouncers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--decisions
+      x-accepts: application/json
+    head:
+      deprecated: false
+      description: Returns information about existing decisions
+      operationId: Bouncers_getInformation
+      parameters:
+      - description: scope to which the decision applies (ie. IP/Range/Username/Session/...)
+        explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: the value to match for in the specified scope
+        explode: true
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: type of decision
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: IP to search for (shorthand for scope=ip&value=)
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: range to search for (shorthand for scope=range&value=)
+        explode: true
+        in: query
+        name: range
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: "indicate if you're looking for a decision that contains the\
+          \ value, or that is contained within the value"
+        explode: true
+        in: query
+        name: contains
+        required: false
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: 400 response
+      security:
+      - APIKeyAuthorizer: []
+      summary: GetDecisions
+      tags:
+      - bouncers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-head--decisions
+      x-accepts: application/json
+  /decisions/{decision_id}:
+    delete:
+      deprecated: false
+      description: Delete decision for given decision ID (only from cscli)
+      operationId: Watchers_removeDecisionById
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: decision_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteDecisionResponse'
+          description: successful operation
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 404 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: DeleteDecision
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--decisions-decision_id
+      x-accepts: application/json
+  /watchers:
+    post:
+      deprecated: false
+      description: This method is used when installing crowdsec (cscli->APIL)
+      operationId: Watchers_registerWatcher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatcherRegistrationRequest'
+        description: Information about the watcher to be registered
+        required: true
+      responses:
+        "201":
+          description: Watcher Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      summary: RegisterWatcher
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--watchers
+      x-content-type: application/json
+      x-accepts: application/json
+  /watchers/login:
+    post:
+      deprecated: false
+      description: Authenticate current to get session ID
+      operationId: Watchers_authenticateSession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatcherAuthRequest'
+        description: Information about the watcher to be reset
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatcherAuthResponse'
+          description: Login successful
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 403 response
+          x-do-not-generate: true
+      summary: AuthenticateWatcher
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--watchers-login
+      x-content-type: application/json
+      x-accepts: application/json
+  /alerts:
+    delete:
+      deprecated: false
+      description: Allows to delete alerts
+      operationId: Watchers_removeAlerts
+      parameters:
+      - description: delete alerts for this scope
+        explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: delete alerts for this value (used with scope)
+        explode: true
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: delete alerts for this scenario
+        explode: true
+        in: query
+        name: scenario
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: delete Alerts with IP (shorthand for scope=ip&value=)
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: delete alerts concerned by range (shorthand for scope=range&value=)
+        explode: true
+        in: query
+        name: range
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: delete alerts added after YYYY-mm-DD-HH:MM:SS
+        explode: true
+        in: query
+        name: since
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: delete alerts added before YYYY-mm-DD-HH:MM:SS
+        explode: true
+        in: query
+        name: until
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: delete only alerts with decisions not expired yet
+        explode: true
+        in: query
+        name: has_active_decision
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: delete only alerts with matching source (ie. cscli/crowdsec)
+        explode: true
+        in: query
+        name: alert_source
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAlertsResponse'
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: deleteAlerts
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--alerts
+      x-accepts: application/json
+    get:
+      deprecated: false
+      description: Allows to search for alerts
+      operationId: Watchers_listAlerts
+      parameters:
+      - description: show alerts for this scope
+        explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: show alerts for this value (used with scope)
+        explode: true
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: show alerts for this scenario
+        explode: true
+        in: query
+        name: scenario
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: IP to search for (shorthand for scope=ip&value=)
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: range to search for (shorthand for scope=range&value=)
+        explode: true
+        in: query
+        name: range
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: search alerts newer than delay (format must be compatible with
+          time.ParseDuration)
+        explode: true
+        in: query
+        name: since
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: search alerts older than delay (format must be compatible with
+          time.ParseDuration)
+        explode: true
+        in: query
+        name: until
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: "if set to true, decisions in simulation mode will be returned\
+          \ as well"
+        explode: true
+        in: query
+        name: simulated
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: only return alerts with decisions not expired yet
+        explode: true
+        in: query
+        name: has_active_decision
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: restrict results to alerts with decisions matching given type
+        explode: true
+        in: query
+        name: decision_type
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: number of alerts to return
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: "restrict results to this origin (ie. lists,CAPI,cscli)"
+        explode: true
+        in: query
+        name: origin
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAlertsResponse'
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: searchAlerts
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--alerts
+      x-accepts: application/json
+    head:
+      deprecated: false
+      description: Allows to search for alerts
+      operationId: Watchers_searchAlerts
+      parameters:
+      - description: show alerts for this scope
+        explode: true
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: show alerts for this value (used with scope)
+        explode: true
+        in: query
+        name: value
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: show alerts for this scenario
+        explode: true
+        in: query
+        name: scenario
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: IP to search for (shorthand for scope=ip&value=)
+        explode: true
+        in: query
+        name: ip
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: range to search for (shorthand for scope=range&value=)
+        explode: true
+        in: query
+        name: range
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: search alerts newer than delay (format must be compatible with
+          time.ParseDuration)
+        explode: true
+        in: query
+        name: since
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: search alerts older than delay (format must be compatible with
+          time.ParseDuration)
+        explode: true
+        in: query
+        name: until
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: "if set to true, decisions in simulation mode will be returned\
+          \ as well"
+        explode: true
+        in: query
+        name: simulated
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: only return alerts with decisions not expired yet
+        explode: true
+        in: query
+        name: has_active_decision
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: restrict results to alerts with decisions matching given type
+        explode: true
+        in: query
+        name: decision_type
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: number of alerts to return
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          type: number
+        style: form
+      - description: "restrict results to this origin (ie. lists,CAPI,cscli)"
+        explode: true
+        in: query
+        name: origin
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: 400 response
+      security:
+      - JWTAuthorizer: []
+      summary: searchAlerts
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-head--alerts
+      x-accepts: application/json
+    post:
+      deprecated: false
+      description: Push alerts to API
+      operationId: Watchers_createAlerts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAlertsRequest'
+        description: Push alerts to the API
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddAlertsResponse'
+          description: Alert(s) created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: pushAlerts
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-post--alerts
+      x-content-type: application/json
+      x-accepts: application/json
+  /alerts/{alert_id}:
+    delete:
+      deprecated: false
+      description: Delete alert for given alert ID (only from cscli)
+      operationId: Watchers_deleteAlertById
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: alert_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAlertsResponse'
+          description: successful operation
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 404 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: DeleteAlert
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--alerts-alert_id
+      x-accepts: application/json
+    get:
+      deprecated: false
+      description: Get alert by ID
+      operationId: Watchers_getAlertById
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: alert_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+          description: successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: 400 response
+          x-do-not-generate: true
+      security:
+      - JWTAuthorizer: []
+      summary: GetAlertByID
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--alerts-alert_id
+      x-accepts: application/json
+    head:
+      deprecated: false
+      description: Get alert by ID
+      operationId: Watchers_getAlertById
+      parameters:
+      - description: ""
+        explode: false
+        in: path
+        name: alert_id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: 400 response
+      security:
+      - JWTAuthorizer: []
+      summary: GetAlertByID
+      tags:
+      - watchers
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-head--alerts-alert_id
+      x-accepts: application/json
+components:
+  schemas:
+    WatcherRegistrationRequest:
+      example:
+        password: password
+        machine_id: machine_id
+      properties:
+        machine_id:
+          type: string
+        password:
+          format: password
+          type: string
+      required:
+      - machine_id
+      - password
+      title: WatcherRegistrationRequest
+      type: object
+    WatcherAuthRequest:
+      example:
+        password: password
+        machine_id: machine_id
+        scenarios:
+        - scenarios
+        - scenarios
+      properties:
+        machine_id:
+          type: string
+        password:
+          format: password
+          type: string
+        scenarios:
+          description: the list of scenarios enabled on the watcher
+          items:
+            type: string
+          type: array
+      required:
+      - machine_id
+      - password
+      title: WatcherAuthRequest
+      type: object
+    WatcherAuthResponse:
+      description: the response of a successful authentication
+      example:
+        code: 0
+        expire: expire
+        token: token
+      properties:
+        code:
+          type: integer
+        expire:
+          type: string
+        token:
+          type: string
+      title: WatcherAuthResponse
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    Alert:
+      example:
+        simulated: true
+        created_at: created_at
+        machine_id: machine_id
+        source:
+          scope: scope
+          ip: ip
+          latitude: 5.962134
+          as_number: as_number
+          range: range
+          cn: cn
+          value: value
+          as_name: as_name
+          longitude: 5.637377
+        scenario_version: scenario_version
+        message: message
+        start_at: start_at
+        uuid: uuid
+        capacity: 1
+        labels:
+        - labels
+        - labels
+        remediation: true
+        scenario_hash: scenario_hash
+        events_count: 6
+        scenario: scenario
+        leakspeed: leakspeed
+        meta:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        decisions:
+        - duration: duration
+          scenario: scenario
+          origin: origin
+          scope: scope
+          simulated: true
+          until: until
+          id: 0
+          type: type
+          uuid: uuid
+          value: value
+        - duration: duration
+          scenario: scenario
+          origin: origin
+          scope: scope
+          simulated: true
+          until: until
+          id: 0
+          type: type
+          uuid: uuid
+          value: value
+        id: 0
+        events:
+        - meta:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          timestamp: timestamp
+        - meta:
+          - value: value
+            key: key
+          - value: value
+            key: key
+          timestamp: timestamp
+        stop_at: stop_at
+      properties:
+        id:
+          description: "only relevant for GET, ignored in POST requests"
+          readOnly: true
+          type: integer
+        uuid:
+          description: "only relevant for LAPI->CAPI, ignored for cscli->LAPI and\
+            \ crowdsec->LAPI"
+          readOnly: true
+          type: string
+        machine_id:
+          description: "only relevant for LAPI->CAPI, ignored for cscli->LAPI and\
+            \ crowdsec->LAPI"
+          readOnly: true
+          type: string
+        created_at:
+          description: "only relevant for GET, ignored in POST requests"
+          readOnly: true
+          type: string
+        scenario:
+          type: string
+        scenario_hash:
+          type: string
+        scenario_version:
+          type: string
+        message:
+          description: a human readable message
+          type: string
+        events_count:
+          format: int32
+          type: integer
+        start_at:
+          type: string
+        stop_at:
+          type: string
+        capacity:
+          format: int32
+          type: integer
+        leakspeed:
+          type: string
+        simulated:
+          type: boolean
+        events:
+          description: the Meta of the events leading to overflow
+          items:
+            $ref: '#/components/schemas/Event'
+          type: array
+        remediation:
+          type: boolean
+        decisions:
+          items:
+            $ref: '#/components/schemas/Decision'
+          type: array
+        source:
+          $ref: '#/components/schemas/Source'
+        meta:
+          description: the Meta data of the Alert itself
+          items:
+            $ref: '#/components/schemas/Meta_inner'
+          title: Meta
+          type: array
+        labels:
+          items:
+            type: string
+          type: array
+      required:
+      - capacity
+      - events
+      - events_count
+      - leakspeed
+      - message
+      - scenario
+      - scenario_hash
+      - scenario_version
+      - simulated
+      - source
+      - start_at
+      - stop_at
+      title: Alert
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    Source:
+      example:
+        scope: scope
+        ip: ip
+        latitude: 5.962134
+        as_number: as_number
+        range: range
+        cn: cn
+        value: value
+        as_name: as_name
+        longitude: 5.637377
+      properties:
+        scope:
+          description: "the scope of a source : ip,range,username,etc"
+          type: string
+        value:
+          description: "the value of a source : the ip, the range, the username,etc"
+          type: string
+        ip:
+          description: provided as a convenience when the source is an IP
+          type: string
+        range:
+          description: provided as a convenience when the source is an IP
+          type: string
+        as_number:
+          description: provided as a convenience when the source is an IP
+          type: string
+        as_name:
+          description: provided as a convenience when the source is an IP
+          type: string
+        cn:
+          type: string
+        latitude:
+          format: float
+          type: number
+        longitude:
+          format: float
+          type: number
+      required:
+      - scope
+      - value
+      title: Source
+      type: object
+    Metrics:
+      properties:
+        apil_version:
+          description: the local version of crowdsec/apil
+          type: string
+        bouncers:
+          items:
+            $ref: '#/components/schemas/MetricsBouncerInfo'
+          type: array
+        machines:
+          items:
+            $ref: '#/components/schemas/MetricsAgentInfo'
+          type: array
+      required:
+      - apil_version
+      - bouncers
+      - machines
+      title: Metrics
+      type: object
+    MetricsBouncerInfo:
+      description: Software version info (so we can warn users about out-of-date software).
+        The software name and the version are "guessed" from the user-agent
+      properties:
+        version:
+          description: software version
+          type: string
+        custom_name:
+          description: name of the component
+          type: string
+        name:
+          description: "bouncer type (firewall, php ...)"
+          type: string
+        last_pull:
+          description: last bouncer pull date
+          type: string
+      title: MetricsBouncerInfo
+      type: object
+    MetricsAgentInfo:
+      description: Software version info (so we can warn users about out-of-date software).
+        The software name and the version are "guessed" from the user-agent
+      properties:
+        version:
+          description: software version
+          type: string
+        name:
+          description: name of the component
+          type: string
+        last_update:
+          description: last agent update date
+          type: string
+        last_push:
+          description: last agent push date
+          type: string
+      title: MetricsAgentInfo
+      type: object
+    Decision:
+      example:
+        duration: duration
+        scenario: scenario
+        origin: origin
+        scope: scope
+        simulated: true
+        until: until
+        id: 0
+        type: type
+        uuid: uuid
+        value: value
+      properties:
+        id:
+          description: (only relevant for GET ops) the unique id
+          readOnly: true
+          type: integer
+        uuid:
+          description: "only relevant for LAPI->CAPI, ignored for cscli->LAPI and\
+            \ crowdsec->LAPI"
+          readOnly: true
+          type: string
+        origin:
+          description: "the origin of the decision : cscli, crowdsec"
+          type: string
+        type:
+          description: "the type of decision, might be 'ban', 'captcha' or something\
+            \ custom. Ignored when watcher (cscli/crowdsec) is pushing to APIL."
+          type: string
+        scope:
+          description: "the scope of decision : does it apply to an IP, a range, a\
+            \ username, etc"
+          type: string
+        value:
+          description: "the value of the decision scope : an IP, a range, a username,\
+            \ etc"
+          type: string
+        duration:
+          description: the duration of the decisions
+          type: string
+        until:
+          description: the date until the decisions must be active
+          type: string
+        scenario:
+          type: string
+        simulated:
+          description: true if the decision result from a scenario in simulation mode
+          readOnly: true
+          type: boolean
+      required:
+      - duration
+      - origin
+      - scenario
+      - scope
+      - type
+      - value
+      title: Decision
+      type: object
+    DeleteDecisionResponse:
+      example:
+        nbDeleted: nbDeleted
+      properties:
+        nbDeleted:
+          description: number of deleted decisions
+          type: string
+      title: DeleteDecisionResponse
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    AddAlertsRequest:
+      items:
+        $ref: '#/components/schemas/Alert'
+      title: AddAlertsRequest
+      type: array
+    AddAlertsResponse:
+      items:
+        description: alert_id
+        type: string
+      title: AddAlertsResponse
+      type: array
+      x-konfig-is-used-in-successful-response: true
+    GetAlertsResponse:
+      items:
+        $ref: '#/components/schemas/Alert'
+      title: AlertsResponse
+      type: array
+      x-konfig-is-used-in-successful-response: true
+    DeleteAlertsResponse:
+      example:
+        nbDeleted: nbDeleted
+      properties:
+        nbDeleted:
+          description: number of deleted alerts
+          type: string
+      title: DeleteAlertsResponse
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    DecisionsStreamResponse:
+      example:
+        new:
+        - duration: duration
+          scenario: scenario
+          origin: origin
+          scope: scope
+          simulated: true
+          until: until
+          id: 0
+          type: type
+          uuid: uuid
+          value: value
+        - duration: duration
+          scenario: scenario
+          origin: origin
+          scope: scope
+          simulated: true
+          until: until
+          id: 0
+          type: type
+          uuid: uuid
+          value: value
+        deleted:
+        - duration: duration
+          scenario: scenario
+          origin: origin
+          scope: scope
+          simulated: true
+          until: until
+          id: 0
+          type: type
+          uuid: uuid
+          value: value
+        - duration: duration
+          scenario: scenario
+          origin: origin
+          scope: scope
+          simulated: true
+          until: until
+          id: 0
+          type: type
+          uuid: uuid
+          value: value
+      properties:
+        new:
+          items:
+            $ref: '#/components/schemas/Decision'
+          title: GetDecisionsResponse
+          type: array
+          x-konfig-is-used-in-successful-response: true
+        deleted:
+          items:
+            $ref: '#/components/schemas/Decision'
+          title: GetDecisionsResponse
+          type: array
+          x-konfig-is-used-in-successful-response: true
+      title: DecisionsStreamResponse
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    Event:
+      example:
+        meta:
+        - value: value
+          key: key
+        - value: value
+          key: key
+        timestamp: timestamp
+      properties:
+        timestamp:
+          type: string
+        meta:
+          description: the Meta data of the Alert itself
+          items:
+            $ref: '#/components/schemas/Meta_inner'
+          title: Meta
+          type: array
+      required:
+      - meta
+      - timestamp
+      title: Event
+      type: object
+    GetDecisionsResponse:
+      items:
+        $ref: '#/components/schemas/Decision'
+      title: GetDecisionsResponse
+      type: array
+      x-konfig-is-used-in-successful-response: true
+    Meta:
+      description: the Meta data of the Alert itself
+      items:
+        $ref: '#/components/schemas/Meta_inner'
+      title: Meta
+      type: array
+    ErrorResponse:
+      description: error response return by the API
+      properties:
+        message:
+          description: Error message
+          type: string
+        errors:
+          description: more detail on individual errors
+          type: string
+      required:
+      - message
+      title: error response
+      type: object
+      x-konfig-is-used-in-non-successful-response: true
+      x-do-not-generate: true
+    konfig-generated-schema-single-parameter-schema-get--decisions-stream:
+      properties:
+        startup:
+          type: boolean
+        scopes:
+          type: string
+        origins:
+          type: string
+        scenarios_containing:
+          type: string
+        scenarios_not_containing:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - startup
+      - scopes
+      - origins
+      - scenarios_containing
+      - scenarios_not_containing
+    konfig-generated-schema-single-parameter-schema-head--decisions-stream:
+      properties:
+        startup:
+          type: boolean
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - startup
+    konfig-generated-schema-single-parameter-schema-delete--decisions:
+      properties:
+        scope:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+        ip:
+          type: string
+        range:
+          type: string
+        scenario:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - scope
+      - value
+      - type
+      - ip
+      - range
+      - scenario
+    konfig-generated-schema-single-parameter-schema-get--decisions:
+      properties:
+        scope:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+        ip:
+          type: string
+        range:
+          type: string
+        contains:
+          type: boolean
+        origins:
+          type: string
+        scenarios_containing:
+          type: string
+        scenarios_not_containing:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - scope
+      - value
+      - type
+      - ip
+      - range
+      - contains
+      - origins
+      - scenarios_containing
+      - scenarios_not_containing
+    konfig-generated-schema-single-parameter-schema-head--decisions:
+      properties:
+        scope:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+        ip:
+          type: string
+        range:
+          type: string
+        contains:
+          type: boolean
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - scope
+      - value
+      - type
+      - ip
+      - range
+      - contains
+    konfig-generated-schema-single-parameter-schema-delete--decisions-decision_id:
+      properties:
+        decision_id:
+          type: string
+      required:
+      - decision_id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - decision_id
+    konfig-generated-schema-single-parameter-schema-post--watchers:
+      properties:
+        machine_id:
+          type: string
+        password:
+          format: password
+          type: string
+      required:
+      - machine_id
+      - password
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-post--watchers-login:
+      properties:
+        machine_id:
+          type: string
+        password:
+          format: password
+          type: string
+        scenarios:
+          description: the list of scenarios enabled on the watcher
+          items:
+            type: string
+          type: array
+      required:
+      - machine_id
+      - password
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-delete--alerts:
+      properties:
+        scope:
+          type: string
+        value:
+          type: string
+        scenario:
+          type: string
+        ip:
+          type: string
+        range:
+          type: string
+        since:
+          format: date-time
+          type: string
+        until:
+          format: date-time
+          type: string
+        has_active_decision:
+          type: boolean
+        alert_source:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - scope
+      - value
+      - scenario
+      - ip
+      - range
+      - since
+      - until
+      - has_active_decision
+      - alert_source
+    konfig-generated-schema-single-parameter-schema-get--alerts:
+      properties:
+        scope:
+          type: string
+        value:
+          type: string
+        scenario:
+          type: string
+        ip:
+          type: string
+        range:
+          type: string
+        since:
+          format: date-time
+          type: string
+        until:
+          format: date-time
+          type: string
+        simulated:
+          type: boolean
+        has_active_decision:
+          type: boolean
+        decision_type:
+          type: string
+        limit:
+          type: number
+        origin:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - scope
+      - value
+      - scenario
+      - ip
+      - range
+      - since
+      - until
+      - simulated
+      - has_active_decision
+      - decision_type
+      - limit
+      - origin
+    konfig-generated-schema-single-parameter-schema-head--alerts:
+      properties:
+        scope:
+          type: string
+        value:
+          type: string
+        scenario:
+          type: string
+        ip:
+          type: string
+        range:
+          type: string
+        since:
+          format: date-time
+          type: string
+        until:
+          format: date-time
+          type: string
+        simulated:
+          type: boolean
+        has_active_decision:
+          type: boolean
+        decision_type:
+          type: string
+        limit:
+          type: number
+        origin:
+          type: string
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - scope
+      - value
+      - scenario
+      - ip
+      - range
+      - since
+      - until
+      - simulated
+      - has_active_decision
+      - decision_type
+      - limit
+      - origin
+    konfig-generated-schema-single-parameter-schema-post--alerts:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-delete--alerts-alert_id:
+      properties:
+        alert_id:
+          type: string
+      required:
+      - alert_id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - alert_id
+    konfig-generated-schema-single-parameter-schema-get--alerts-alert_id:
+      properties:
+        alert_id:
+          type: string
+      required:
+      - alert_id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - alert_id
+    konfig-generated-schema-single-parameter-schema-head--alerts-alert_id:
+      properties:
+        alert_id:
+          type: string
+      required:
+      - alert_id
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - alert_id
+    Meta_inner:
+      example:
+        value: value
+        key: key
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      type: object
+  securitySchemes:
+    JWTAuthorizer:
+      in: header
+      name: "Authorization: Bearer"
+      type: apiKey
+      x-konfig-globally-required-security: false
+    APIKeyAuthorizer:
+      in: header
+      name: X-Api-Key
+      type: apiKey
+      x-konfig-globally-required-security: false
+
